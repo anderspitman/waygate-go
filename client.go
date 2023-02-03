@@ -72,6 +72,7 @@ func FlowToken(serverAddr, bindAddr string) (string, error) {
 			tok, err := oauthConf.Exchange(ctx, code)
 			if err != nil {
 				fmt.Println(err.Error())
+				return
 			}
 
 			token = tok.AccessToken

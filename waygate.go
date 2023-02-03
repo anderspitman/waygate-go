@@ -5,6 +5,15 @@ import (
 	"math/big"
 )
 
+type Waygate struct {
+	Domains     []string `json:"domains"`
+	Description string   `json:"description"`
+}
+
+type TokenData struct {
+	WaygateId string `json:"waygate_id"`
+}
+
 func GenRandomCode() (string, error) {
 
 	const chars string = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
