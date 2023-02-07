@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/anderspitman/waygate-go"
@@ -25,5 +26,25 @@ func main() {
 		}
 
 		fmt.Println("Token: ", token)
+
+		httpClient := &http.Client{}
+
+		publicKey := "fPy5iEIhAQxIlurDiY4W+qEvXsF/t1a/koapEkVbrDc="
+
+		url := fmt.Sprintf("https://tn.apitman.com/waygate/open?type=wireguard&token=%s&public-key=%s", token, publicKey)
+		req, err := http.NewRequest("POST", url, nil)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+		defer resp.Body.Close()
+
+		fmt.Println(resp.Status)
 	}
 }

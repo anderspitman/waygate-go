@@ -136,7 +136,7 @@ func (s *Server) open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := extractToken("token", r)
+	token, err := ExtractToken("token", r)
 	if err != nil {
 		w.WriteHeader(401)
 		fmt.Fprintf(w, err.Error())
@@ -204,7 +204,7 @@ func (s *Server) open(w http.ResponseWriter, r *http.Request) {
 }
 
 // Looks for auth token in query string, then headers, then cookies
-func extractToken(tokenName string, r *http.Request) (string, error) {
+func ExtractToken(tokenName string, r *http.Request) (string, error) {
 
 	query := r.URL.Query()
 
