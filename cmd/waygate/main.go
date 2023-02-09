@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
 
 	"github.com/anderspitman/waygate-go"
 )
@@ -29,6 +31,7 @@ func main() {
 
 		httpClient := &http.Client{}
 
+		privateKey := "wOEXYf4xNqtrFokL+LATj8EYQK+1ughMDqXnvlbj72Y="
 		publicKey := "fPy5iEIhAQxIlurDiY4W+qEvXsF/t1a/koapEkVbrDc="
 
 		url := fmt.Sprintf("https://tn.apitman.com/waygate/open?type=wireguard&token=%s&public-key=%s", token, publicKey)
@@ -45,6 +48,32 @@ func main() {
 		}
 		defer resp.Body.Close()
 
+		wgConfig := &waygate.WireGuardConfig{}
+
+		err = json.NewDecoder(resp.Body).Decode(wgConfig)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		wgConfig.PrivateKey = privateKey
+
 		fmt.Println(resp.Status)
+
+		fmt.Println(wgConfig)
+
+		err = os.WriteFile("/etc/wireguard/waygate0.conf", []byte(wgConfig.String()), 0600)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		cmd := exec.Command("wg-quick", "up", "waygate0")
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, string(output))
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
 	}
 }
