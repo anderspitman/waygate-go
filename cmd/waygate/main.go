@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 
@@ -34,7 +35,8 @@ func main() {
 		privateKey := "wOEXYf4xNqtrFokL+LATj8EYQK+1ughMDqXnvlbj72Y="
 		publicKey := "fPy5iEIhAQxIlurDiY4W+qEvXsF/t1a/koapEkVbrDc="
 
-		url := fmt.Sprintf("https://tn.apitman.com/waygate/open?type=wireguard&token=%s&public-key=%s", token, publicKey)
+		pubKeyEscaped := url.QueryEscape(publicKey)
+		url := fmt.Sprintf("https://tn.apitman.com/waygate/open?type=wireguard&token=%s&public-key=%s", token, pubKeyEscaped)
 		req, err := http.NewRequest("POST", url, nil)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
