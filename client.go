@@ -3,7 +3,7 @@ package waygate
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/browser"
+	//"github.com/pkg/browser"
 	"golang.org/x/oauth2"
 	"net/http"
 )
@@ -33,7 +33,7 @@ func FlowToken(serverAddr, bindAddr string) (string, error) {
 
 		fmt.Println(oauthUrl)
 
-		browser.OpenURL(oauthUrl)
+		//browser.OpenURL(oauthUrl)
 
 		mux := http.NewServeMux()
 
