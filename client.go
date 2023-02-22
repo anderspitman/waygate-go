@@ -19,7 +19,9 @@ type ClientStore interface {
 	SetAccessToken(token string)
 }
 
-func FlowToken(serverAddr, bindAddr string) (string, error) {
+func FlowToken(serverAddr, bindHost string, bindPort int) (string, error) {
+
+	bindAddr := fmt.Sprintf("%s:%d", bindHost, bindPort)
 
 	db := ClientStoreFactory()
 
@@ -38,7 +40,7 @@ func FlowToken(serverAddr, bindAddr string) (string, error) {
 		mux := http.NewServeMux()
 
 		srv := &http.Server{
-			Addr:    bindAddr,
+			Addr:    fmt.Sprintf(":%d", bindPort),
 			Handler: mux,
 		}
 

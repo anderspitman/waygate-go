@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -22,7 +23,15 @@ func main() {
 
 	switch command {
 	case "client":
-		token, err := waygate.FlowToken("tn.apitman.com", "localhost:9001")
+		flagSet := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+		addr := flagSet.String("addr", "localhost:8080", "Address to proxy")
+		err := flagSet.Parse(os.Args[2:])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s: parsing flags: %s\n", os.Args[0], err)
+			os.Exit(1)
+		}
+
+		token, err := waygate.FlowToken("tn.apitman.com", "localhost", 9001)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -32,6 +41,7 @@ func main() {
 
 		httpClient := &http.Client{}
 
+		// TODO: Generate keys at runtime
 		privateKey := "wOEXYf4xNqtrFokL+LATj8EYQK+1ughMDqXnvlbj72Y="
 		publicKey := "fPy5iEIhAQxIlurDiY4W+qEvXsF/t1a/koapEkVbrDc="
 
@@ -80,7 +90,6 @@ func main() {
 		}
 
 		caddyConfig := waygate.NewCaddyHttpConfig()
-		port := 8000
 		caddyRoute := waygate.CaddyRoute{
 			Match: []interface{}{
 				struct {
@@ -91,11 +100,10 @@ func main() {
 			},
 			Handle: []waygate.CaddyHandler{
 				waygate.CaddyHandler{
-					// TODO: I think this should be "reverse_proxy".
 					Handler: "reverse_proxy",
 					Upstreams: []waygate.CaddyUpstream{
 						waygate.CaddyUpstream{
-							Dial: fmt.Sprintf("localhost:%d", port),
+							Dial: *addr,
 						},
 					},
 				},
