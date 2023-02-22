@@ -4,6 +4,12 @@ import (
 	"fmt"
 )
 
+type WireGuardTunnelResponse struct {
+	Domains      []string         `json:"domains"`
+	Port         int              `json:"port"`
+	ClientConfig *WireGuardConfig `json:"client_config"`
+}
+
 type WireGuardConfig struct {
 	Address    string           `json:"address"`
 	PrivateKey string           `json:"private_key"`
@@ -13,7 +19,7 @@ type WireGuardConfig struct {
 
 type WireGuardPeer struct {
 	PublicKey           string   `json:"public_key"`
-	AllowedIps          []string `json:"AllowedIps"`
+	AllowedIps          []string `json:"allowed_ips"`
 	Endpoint            string   `json:"endpoint"`
 	PersistentKeepalive int      `json:"persistent_keepalive"`
 }
