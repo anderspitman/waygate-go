@@ -2,6 +2,8 @@ package waygate
 
 import (
 	"fmt"
+	"os/exec"
+	"strings"
 )
 
 type WireGuardTunnelResponse struct {
@@ -64,4 +66,25 @@ func (c *WireGuardConfig) String() string {
 	}
 
 	return s
+}
+
+func GenerateWireGuardKeys() (string, string, error) {
+	cmd := exec.Command("wg", "genkey")
+	privKey, err := cmd.Output()
+	if err != nil {
+		return "", "", err
+	}
+
+	privKeyStr := string(privKey[:len(privKey)-1])
+
+	cmd = exec.Command("wg", "pubkey")
+	cmd.Stdin = strings.NewReader(privKeyStr)
+	pubKey, err := cmd.Output()
+	if err != nil {
+		return "", "", err
+	}
+
+	pubKeyStr := string(pubKey[:len(pubKey)-1])
+
+	return privKeyStr, pubKeyStr, nil
 }

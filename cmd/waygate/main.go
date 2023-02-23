@@ -41,9 +41,11 @@ func main() {
 
 		httpClient := &http.Client{}
 
-		// TODO: Generate keys at runtime
-		privateKey := "wOEXYf4xNqtrFokL+LATj8EYQK+1ughMDqXnvlbj72Y="
-		publicKey := "fPy5iEIhAQxIlurDiY4W+qEvXsF/t1a/koapEkVbrDc="
+		privateKey, publicKey, err := waygate.GenerateWireGuardKeys()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
 
 		pubKeyEscaped := url.QueryEscape(publicKey)
 		url := fmt.Sprintf("https://tn.apitman.com/waygate/open?type=wireguard&token=%s&public-key=%s", token, pubKeyEscaped)
