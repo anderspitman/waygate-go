@@ -24,6 +24,7 @@ func main() {
 	switch command {
 	case "client":
 		flagSet := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+		port := flagSet.Int("port", 9001, "OAuth server port")
 		addr := flagSet.String("addr", "localhost:8080", "Address to proxy")
 		err := flagSet.Parse(os.Args[2:])
 		if err != nil {
@@ -31,7 +32,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		token, err := waygate.FlowToken("tn.apitman.com", "localhost", 9001)
+		token, err := waygate.FlowToken("tn.apitman.com", "localhost", *port)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
